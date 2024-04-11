@@ -3,18 +3,16 @@ import {getSignedUrl } from "@aws-sdk/s3-request-presigner"
 
 exports.handler = async (event: any) => {
     const { fileName, fileType } = JSON.parse(event.body);
-    console.log(fileType);
     const client = new S3Client({ region: process.env.AWS_REGION });
 
     const command = new PutObjectCommand({
         Bucket: process.env.BUCKET_NAME,
         Key: fileName,
         ContentType: fileType,
-        ACL: 'private',
     });
 
-    try {
 
+    try {
         const presignedUrl = await getSignedUrl(client, command, { expiresIn: 60 });
         console.log(presignedUrl);
         return {
